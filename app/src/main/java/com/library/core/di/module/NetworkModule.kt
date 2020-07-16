@@ -1,0 +1,58 @@
+package com.library.core.di.module
+import com.library.core.utils.Constants
+import dagger.Module
+import dagger.Provides
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
+
+@Module
+class NetworkModule {
+
+    @Singleton
+    @Provides
+    fun providesClient(): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+            .readTimeout(Constants.TIME_OUT.toLong(), TimeUnit.SECONDS)
+            .connectTimeout(Constants.TIME_OUT.toLong(), TimeUnit.SECONDS)
+            .callTimeout(Constants.TIME_OUT.toLong(), TimeUnit.SECONDS)
+            .writeTimeout(Constants.TIME_OUT.toLong(), TimeUnit.SECONDS)
+            .addInterceptor(
+                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC).setLevel(
+                    HttpLoggingInterceptor.Level.BODY
+                ).setLevel(HttpLoggingInterceptor.Level.HEADERS)
+            )
+//            .addInterceptor { chain: Interceptor.Chain ->
+//                chain.proceed(
+//                    chain.request().newBuilder()
+//                        .addHeader("Content-Type", "application/json")
+//                        .addHeader(
+//                            "Authorization",
+//                            "Bearer " + (context as MainApplication).accessToken
+//                        )
+//                        .build()
+//                )
+//            }
+        return builder.build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(providesClient())
+            .build()
+    }
+
+//    @Singleton
+//    @Provides
+//    fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create<ApiService>(ApiService::class.java)
+
+}
