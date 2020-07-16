@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'maven-publish'
+//apply plugin: 'maven-publish'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -38,45 +38,49 @@ android {
     }
 }
 
-/**Create github.properties in root project folder file with gpr.usr=GITHUB_USER_ID  & gpr.key=PERSONAL_ACCESS_TOKEN**/
-def githubProperties = new Properties()
-githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
-
-
-def getVersionName = { ->
-    return "1.0.0" // Replace with version Name
-}
-
-def getArtificatId = { ->
-    return "mvvm_core" // Replace with library name ID
-}
-
-publishing {
-    publications {
-        bar(MavenPublication) {
-            groupId 'com.datnt.libraries'
-            artifactId getArtificatId()
-            version getVersionName()
-            artifact("$buildDir/outputs/aar/${getArtificatId()}-release.aar")
-        }
-    }
-
-    repositories {
-        maven {
-            name = "mvvm_core"
-            /** Configure path of your package repository on Github
-             *  Replace GITHUB_USERID with your/organisation Github userID and REPOSITORY with the repository name on GitHub
-             */
-            url = uri("https://maven.pkg.github.com/datnt/mvvm_core")
-
-            credentials {
-                /**Create github.properties in root project folder file with gpr.usr=GITHUB_USER_ID  & gpr.key=PERSONAL_ACCESS_TOKEN**/
-                username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
-                password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
-            }
-        }
-    }
-}
+///**Create github.properties in root project folder file with gpr.usr=GITHUB_USER_ID  & gpr.key=PERSONAL_ACCESS_TOKEN**/
+//def githubProperties = new Properties()
+//githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+//
+//
+//def getVersionName = { ->
+//    return "1.0.0" // Replace with version Name
+//}
+//
+//def getArtificatId = { ->
+//    return "mvvm_core" // Replace with library name ID
+//}
+//
+//publishing {
+//    publications {
+//        bar(MavenPublication) {
+//            groupId 'com.datnt55.libraries'
+//            artifactId getArtificatId()
+//            version getVersionName()
+//            artifact("$buildDir/outputs/aar/${getArtificatId()}-release.aar")
+//        }
+//    }
+//
+//    repositories {
+//        maven {
+//            name = "mvvm_core"
+//            /** Configure path of your package repository on Github
+//             *  Replace GITHUB_USERID with your/organisation Github userID and REPOSITORY with the repository name on GitHub
+//             */
+//            url = uri("https://maven.pkg.github.com/datnt55/mvvm_core")
+//
+//            credentials {
+//                /**Create github.properties in root project folder file with gpr.usr=GITHUB_USER_ID  & gpr.key=PERSONAL_ACCESS_TOKEN**/
+//                username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
+//                password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
+//            }
+//        }
+//
+//        dependencies {
+//            implementation 'com.example:package'
+//        }
+//    }
+//}
 
 
 dependencies {
@@ -121,4 +125,5 @@ dependencies {
     androidTestImplementation deps.atsl.ext_junit
     androidTestImplementation deps.espresso.core
 
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 }
