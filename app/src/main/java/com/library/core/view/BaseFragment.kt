@@ -66,12 +66,6 @@ abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel> : DaggerFrag
         viewDataBinding!!.lifecycleOwner = this
         viewDataBinding!!.executePendingBindings()
 
-        mViewModel?.progressLoading?.observe(viewLifecycleOwner, Observer {
-            if (it)
-                (activity as BaseActivity<*, *>).showProgressLoading()
-            else
-                (activity as BaseActivity<*, *>).hideProgressLoading()
-        })
     }
 
 //    fun hideKeyboard() {

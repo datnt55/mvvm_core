@@ -79,6 +79,4 @@ dependencies {
     testImplementation deps.junit
     androidTestImplementation deps.atsl.ext_junit
     androidTestImplementation deps.espresso.core
-
-    implementation 'com.github.datnt55:mvvm_core:1.0.0'
 }
