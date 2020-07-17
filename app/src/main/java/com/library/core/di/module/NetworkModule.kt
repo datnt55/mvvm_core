@@ -1,4 +1,6 @@
 package com.library.core.di.module
+import com.library.core.di.qualifier.BaseUrl
+import com.library.core.di.qualifier.PreferenceInfo
 import com.library.core.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -42,9 +44,9 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(): Retrofit {
+    fun provideRetrofit(@BaseUrl baseUrl : String): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(baseUrl)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .client(providesClient())

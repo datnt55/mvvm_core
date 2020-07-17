@@ -15,17 +15,13 @@ class LocalModule {
     @Provides
     @Singleton
     internal fun provideContext(application: Application): Context = application
-
-    @Provides
-    @PreferenceInfo
-    internal fun providePreferenceName(): String = Constants.PREF_NAME
-
 //    @Provides
 //    @DatabaseInfo
 //    fun provideDatabaseName(): String? = Constants.DATABASE_NAME
 
     @Provides
     @Singleton
-    internal fun providePreference(context: Context): SharedPreferences = context.getSharedPreferences(
-        Constants.PREF_NAME, Context.MODE_PRIVATE)
+    internal fun providePreference(context: Context, @PreferenceInfo name : String): SharedPreferences = context.getSharedPreferences(
+        name, Context.MODE_PRIVATE)
+
 }

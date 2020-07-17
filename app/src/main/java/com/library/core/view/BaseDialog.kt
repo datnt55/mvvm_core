@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Window
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -18,10 +19,13 @@ abstract class BaseDialog<T : ViewDataBinding, V>(private val item : V? = null, 
 
     protected lateinit var mViewDataBinding: T
 
-    abstract fun handleView(viewBinding : T)
+    abstract fun bindView(viewBinding : T)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+
         mViewDataBinding = DataBindingUtil.inflate(LayoutInflater.from(context), getLayoutId(), null, false)
 
         if(item != null){
@@ -31,7 +35,7 @@ abstract class BaseDialog<T : ViewDataBinding, V>(private val item : V? = null, 
 
         setContentView(mViewDataBinding.root)
 
-        handleView(mViewDataBinding)
+        bindView(mViewDataBinding)
     }
 
 
