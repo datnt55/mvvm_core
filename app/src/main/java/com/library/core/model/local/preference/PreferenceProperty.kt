@@ -4,34 +4,40 @@ import android.content.SharedPreferences
 import androidx.annotation.WorkerThread
 import androidx.core.content.edit
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 fun SharedPreferences.Int(
-    key: (KProperty<*>) -> String = KProperty<*>::name,
+    key: String ,
     defaultValue: Int = 0
 ): ReadWriteProperty<Any, Int> = object : ReadWriteProperty<Any, Int> {
     @WorkerThread
     override fun getValue(thisRef: Any, property: KProperty<*>): Int {
-        return getInt(key(property), defaultValue)
+        return getInt(key, defaultValue)
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
-        edit { putInt(key(property), value) }
+        edit { putInt(key, value) }
     }
 }
 
 fun SharedPreferences.String(
     key: String ,
     defaultValue: String = ""
-): ReadWriteProperty<Any, String> = object : ReadWriteProperty<Any, String> {
+): ReadWriteProperty<Any, String?> = object : ReadWriteProperty<Any, String?> {
     @WorkerThread
-    override fun getValue(thisRef: Any, property: KProperty<*>): String {
+    override fun getValue(thisRef: Any, property: KProperty<*>): String? {
         return getString(key, defaultValue).toString()
     }
 
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: String) {
-        edit { putString(key, value) }
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
+        if (value == null){
+            edit {
+                remove(key)
+            }
+        }else
+            edit { putString(key, value) }
     }
 }
 
@@ -55,9 +61,29 @@ inline fun <reified T> SharedPreferences.Object(
 ): ReadWriteProperty<Any, T> = object : ReadWriteProperty<Any, T> {
     @WorkerThread
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
-        if (getString(key, null).isNullOrBlank())
+        val value = getString(key, null)
+        if (value.isNullOrBlank())
             return defaultValue
-        return Gson().fromJson(getString(key, null),T::class.java)
+        return Gson().fromJson(value,T::class.java)
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        val pref = Gson().toJson(value)
+        edit { putString(key, pref) }
+    }
+}
+
+inline fun <reified T>  SharedPreferences.Array(
+    key: String ,
+    defaultValue: T
+): ReadWriteProperty<Any, T> = object : ReadWriteProperty<Any, T> {
+    @WorkerThread
+    override fun getValue(thisRef: Any, property: KProperty<*>): T {
+        val value = getString(key, null)
+        if (value.isNullOrBlank())
+            return defaultValue
+        val type = object : TypeToken<ArrayList<String>>() {}.type
+        return Gson().fromJson(value, type)
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
