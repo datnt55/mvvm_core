@@ -33,17 +33,17 @@ class NetworkModule {
                     HttpLoggingInterceptor.Level.BODY
                 ).setLevel(HttpLoggingInterceptor.Level.HEADERS)
             )
-            .addInterceptor { chain: Interceptor.Chain ->
-                chain.proceed(
-                    chain.request().newBuilder()
-                        .addHeader("Content-Type", "application/json")
-                        .addHeader(
-                            "Authorization",
-                            "Bearer " + sharedPreferences.getString(Constants.ACCESS_TOKEN,"")
-                        )
-                        .build()
-                )
-            }
+//            .addInterceptor { chain: Interceptor.Chain ->
+//                chain.proceed(
+//                    chain.request().newBuilder()
+//                        .addHeader("Content-Type", "application/json")
+//                        .addHeader(
+//                            "Authorization",
+//                            "Bearer " + sharedPreferences.getString(Constants.ACCESS_TOKEN,"")
+//                        )
+//                        .build()
+//                )
+//            }
         return builder.build()
     }
 
