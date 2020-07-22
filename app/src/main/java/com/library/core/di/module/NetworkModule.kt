@@ -1,8 +1,10 @@
 package com.library.core.di.module
+import android.content.Context
 import android.content.SharedPreferences
 import com.library.core.di.qualifier.BaseUrl
 import com.library.core.di.qualifier.PreferenceInfo
 import com.library.core.utils.Constants
+import com.readystatesoftware.chuck.ChuckInterceptor
 import dagger.Module
 import dagger.Provides
 import okhttp3.Interceptor
@@ -19,12 +21,13 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun providesClient(sharedPreferences: SharedPreferences): OkHttpClient {
+    fun providesClient(sharedPreferences: SharedPreferences, chuckInterceptor: ChuckInterceptor): OkHttpClient {
         val builder = OkHttpClient.Builder()
             .readTimeout(Constants.TIME_OUT.toLong(), TimeUnit.SECONDS)
             .connectTimeout(Constants.TIME_OUT.toLong(), TimeUnit.SECONDS)
             .callTimeout(Constants.TIME_OUT.toLong(), TimeUnit.SECONDS)
             .writeTimeout(Constants.TIME_OUT.toLong(), TimeUnit.SECONDS)
+            .addInterceptor(chuckInterceptor)
             .addInterceptor(
                 HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC).setLevel(
                     HttpLoggingInterceptor.Level.BODY
@@ -44,14 +47,19 @@ class NetworkModule {
         return builder.build()
     }
 
+    @Provides
+    @Singleton
+    internal fun provideChuckInterceptor(context: Context): ChuckInterceptor =
+        ChuckInterceptor(context)
+
     @Singleton
     @Provides
-    fun provideRetrofit(@BaseUrl baseUrl : String, sharedPreferences: SharedPreferences): Retrofit {
+    fun provideRetrofit(@BaseUrl baseUrl : String, sharedPreferences: SharedPreferences, chuckInterceptor: ChuckInterceptor): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
-            .client(providesClient(sharedPreferences))
+            .client(providesClient(sharedPreferences, chuckInterceptor))
             .build()
     }
 

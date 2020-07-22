@@ -81,4 +81,7 @@ dependencies {
     testImplementation deps.junit
     androidTestImplementation deps.atsl.ext_junit
     androidTestImplementation deps.espresso.core
+
+    debugImplementation 'com.readystatesoftware.chuck:library:1.1.0'
+    releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.1.0'
 }
