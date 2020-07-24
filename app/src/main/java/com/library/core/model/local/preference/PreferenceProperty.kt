@@ -73,7 +73,7 @@ inline fun <reified T> SharedPreferences.Object(
     }
 }
 
-inline fun <reified T>  SharedPreferences.Array(
+inline fun <reified T> SharedPreferences.Arrays(
     key: String ,
     defaultValue: T
 ): ReadWriteProperty<Any, T> = object : ReadWriteProperty<Any, T> {
@@ -82,7 +82,7 @@ inline fun <reified T>  SharedPreferences.Array(
         val value = getString(key, null)
         if (value.isNullOrBlank())
             return defaultValue
-        val type = object : TypeToken<ArrayList<String>>() {}.type
+        val type = object : TypeToken<T>() {}.type
         return Gson().fromJson(value, type)
     }
 
