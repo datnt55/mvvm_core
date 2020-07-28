@@ -1,18 +1,12 @@
 package com.library.core.view
 
-import android.Manifest
-import android.app.Dialog
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
-import android.view.ViewGroup
-import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.LayoutRes
 import androidx.annotation.Nullable
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.Observer
 import com.library.core.di.viewmodel.ViewModelProviderFactory
 import dagger.android.AndroidInjection
 import dagger.android.support.DaggerAppCompatActivity
@@ -24,7 +18,7 @@ abstract class BaseActivity<T : ViewDataBinding, V : BaseViewModel> : DaggerAppC
     @set:Inject
     lateinit var factory: ViewModelProviderFactory
 
-    protected lateinit var mViewDataBinding: T
+    protected lateinit var binding: T
 
     private lateinit var mViewModel: V
 
@@ -43,14 +37,15 @@ abstract class BaseActivity<T : ViewDataBinding, V : BaseViewModel> : DaggerAppC
     }
 
     open fun getViewDataBinding(): T {
-        return mViewDataBinding
+        return binding
     }
 
     private fun performDataBinding() {
-        mViewDataBinding = DataBindingUtil.setContentView(this, getLayoutId())
+        binding = DataBindingUtil.setContentView(this, getLayoutId())
         this.mViewModel = getViewModel()
-        mViewDataBinding.setVariable(getBindingVariable(), mViewModel)
-        mViewDataBinding.executePendingBindings()
+        binding.setVariable(getBindingVariable(), mViewModel)
+        binding.lifecycleOwner = this
+        binding.executePendingBindings()
     }
 
     private fun performDependencyInjection() {

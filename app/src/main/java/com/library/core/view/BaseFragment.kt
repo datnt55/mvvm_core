@@ -7,15 +7,17 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.Observer
 import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.DaggerFragment
 
 abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel> : DaggerFragment() {
 
     private var baseActivity: BaseActivity<*,*>? = null
+
     private var mRootView: View? = null
-    protected var viewDataBinding: T? = null
+
+    protected lateinit var binding: T
+
     private var mViewModel: V? = null
 
     /**
@@ -50,8 +52,8 @@ abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel> : DaggerFrag
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewDataBinding = DataBindingUtil.inflate(inflater, layoutId(), container, false)
-        mRootView = viewDataBinding!!.root
+        binding = DataBindingUtil.inflate(inflater, layoutId(), container, false)
+        mRootView = binding.root
         return mRootView
     }
 
@@ -62,9 +64,9 @@ abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel> : DaggerFrag
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewDataBinding!!.setVariable(bindingVariable(), mViewModel)
-        viewDataBinding!!.lifecycleOwner = this
-        viewDataBinding!!.executePendingBindings()
+        binding.setVariable(bindingVariable(), mViewModel)
+        binding.lifecycleOwner = this
+        binding.executePendingBindings()
 
     }
 
@@ -80,7 +82,7 @@ abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel> : DaggerFrag
 //        }
 //    }
 
-    private fun performDependencyInjection() {
-        AndroidSupportInjection.inject(this)
-    }
+//    private fun performDependencyInjection() {
+//        AndroidSupportInjection.inject(this)
+//    }
 }
